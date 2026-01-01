@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bảng điều khiển Lớp Học Thông Minh</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#2bee6c",
+              "background-light": "#f6f8f6",
+              "background-dark": "#102216",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[960px] flex-1 px-4 md:px-0">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 dark:border-white/10 px-6 sm:px-10 py-3">
+<div class="flex items-center gap-4 text-black dark:text-white">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-black dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Lớp Học Thông Minh</h2>
+</div>
+</header>
+<main class="flex flex-col flex-1 py-10 px-4 sm:px-6">
+<h1 class="text-black dark:text-white tracking-tight text-[32px] font-bold leading-tight px-4 text-center pb-3 pt-6">Bảng điều khiển Lớp Học Thông Minh</h1>
+<p class="text-zinc-600 dark:text-zinc-400 text-base font-normal leading-normal pb-8 pt-1 px-4 text-center">Chọn một chức năng để bắt đầu.</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+
+    <!-- Giám sát Môi trường -->
+    <a href="/function1" class="block">
+        <div class="flex flex-col gap-4 p-6 
+                    bg-white/20 dark:bg-white/20
+                    rounded-xl border border-white/30 dark:border-white/30
+                    shadow-md shadow-black/30
+                    backdrop-blur-sm
+                    transition-all duration-200
+                    hover:bg-white/30 hover:border-primary/60 hover:shadow-lg
+                    cursor-pointer group">
+            <div class="text-primary">
+                <span class="material-symbols-outlined text-4xl">monitoring</span>
+            </div>
+            <div>
+                <h3 class="text-black dark:text-white text-xl font-bold leading-normal">Giám sát Môi trường</h3>
+                <p class="text-zinc-600 dark:text-zinc-300 text-sm mt-1">
+                    Theo dõi nhiệt độ, độ ẩm và chất lượng không khí.
+                </p>
+            </div>
+        </div>
+    </a>
+
+    
+    <!-- Điều khiển Thiết bị -->
+    <a href="/function2" class="block">
+        <div class="flex flex-col gap-4 p-6 
+                    bg-white/20 dark:bg-white/20
+                    rounded-xl border border-white/30 dark:border-white/30
+                    shadow-md shadow-black/30
+                    backdrop-blur-sm
+                    transition-all duration-200
+                    hover:bg-white/30 hover:border-primary/60 hover:shadow-lg
+                    cursor-pointer group">
+            <div class="text-primary">
+                <span class="material-symbols-outlined text-4xl">toggle_on</span>
+            </div>
+            <div>
+                <h3 class="text-black dark:text-white text-xl font-bold leading-normal">Điều khiển Thiết bị</h3>
+                <p class="text-zinc-600 dark:text-zinc-300 text-sm mt-1">
+                    Quản lý đèn, quạt, và các thiết bị khác.
+                </p>
+            </div>
+        </div>
+    </a>
+
+     <!-- Điểm danh -->
+    <a href="/function3" class="block">
+        <div class="flex flex-col gap-4 p-6 
+                    bg-white/20 dark:bg-white/20
+                    rounded-xl border border-white/30 dark:border-white/30
+                    shadow-md shadow-black/30
+                    backdrop-blur-sm
+                    transition-all duration-200
+                    hover:bg-white/30 hover:border-primary/60 hover:shadow-lg
+                    cursor-pointer group">
+            <div class="text-primary">
+                <span class="material-symbols-outlined text-4xl">groups</span>
+            </div>
+            <div>
+                <h3 class="text-black dark:text-white text-xl font-bold leading-normal">Điểm danh</h3>
+                <p class="text-zinc-600 dark:text-zinc-300 text-sm mt-1">
+                    Bắt đầu phiên điểm danh tự động hoặc thủ công.
+                </p>
+            </div>
+        </div>
+    </a>
+
+</div>
+
+</main>
+<footer class="flex flex-col gap-6 px-5 py-10 text-center @container mt-auto">
+<div class="flex flex-wrap items-center justify-center gap-6 @[480px]:flex-row @[480px]:justify-around">
+    <a href="/thongtintacgia"
+        class="text-zinc-400 hover:text-zinc-200 text-base transition-colors">
+        Thông tin tác giả
+    </a>
+
+
+
+</div>
+<p class="text-zinc-600 dark:text-zinc-400 text-sm font-normal leading-normal">© 2025 Lớp Học Thông Minh. All rights reserved.</p>
+</footer>
+</div>
+</div>
+</div>
+</div>
+</body></html>

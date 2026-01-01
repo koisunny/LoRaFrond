@@ -1,0 +1,48 @@
+async function fetchData() {
+    try {
+        const res = await fetch("/api/sensors/latest");
+        const data = await res.json();
+
+        // ======================================================
+        // 1) Đưa realtime vào buffer để biểu đồ không rung
+        // ======================================================
+        realtimeBuffer.push({
+            Timestamp: data.timestamp,         // API phải trả timestamp
+            "Temp(C)": data.temp,
+            "Humidity(%)": data.humi,
+            "Pressure": data.press,
+            "Light(lux)": data.light,
+            "Gas": data.gas
+        });
+
+        // giữ buffer tối đa 24 giờ
+        if (realtimeBuffer.length > 86400) realtimeBuffer.shift();
+        // ======================================================
+
+
+        // ======================================================
+        // 2) Update 5 ô dữ liệu số (giữ nguyên như bạn làm)
+        // ======================================================
+        document.getElementById("temp-value").innerText = data.temp + "°C";
+        document.getElementById("humi-value").innerText = data.humi + "%";
+        document.getElementById("press-value").innerText = data.press + " hPa";
+        document.getElementById("light-value").innerText = data.light + " lux";
+        document.getElementById("gas-value").innerText = data.gas + " ppm";
+        document.getElementById("temp-24h-current").innerText = data.temp + "°C";
+        document.getElementById("humid-24h-current").innerText = data.humi + "%";
+        document.getElementById("pressure-24h-current").innerText = data.press + " hPa";
+        document.getElementById("light-24h-current").innerText = data.light + " lux";
+    } catch (e) {
+        console.log("Lỗi khi lấy dữ liệu:", e);
+    }
+}
+
+setInterval(fetchData, 1000);
+
+
+
+
+
+
+
+
