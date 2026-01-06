@@ -192,4 +192,69 @@
 </div>
 </main>
 </div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  const firebaseConfig = {
+    databaseURL: "https://loradiemdanh-default-rtdb.asia-southeast1.firebasedatabase.app"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const attendanceRef = ref(db, "attendance/22DRTA1");
+
+  onValue(attendanceRef, (snapshot) => {
+    const data = snapshot.val();
+    renderTable(data);
+  });
+
+  function renderTable(data) {
+    const tbody = document.querySelector("tbody");
+    tbody.innerHTML = "";
+
+    if (!data) return;
+
+    Object.entries(data).forEach(([ma_sv, sv]) => {
+      const statusBadge = getStatusBadge(sv.trang_thai);
+
+      const row = `
+        <tr class="group hover:bg-surface-offset transition-colors">
+          <td class="p-4">
+            <p class="font-medium text-text-main">${sv.ten_sv || ""}</p>
+          </td>
+          <td class="p-4 text-sm text-text-sub font-mono">${ma_sv}</td>
+          <td class="p-4 text-right">${statusBadge}</td>
+        </tr>
+      `;
+      tbody.insertAdjacentHTML("beforeend", row);
+    });
+  }
+
+  function getStatusBadge(status) {
+    if (status === "co_mat") {
+      return `
+        <span class="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary border border-primary/20">
+          <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-primary"></span>
+          Có mặt
+        </span>`;
+    }
+
+    if (status === "tre") {
+      return `
+        <span class="inline-flex items-center rounded-full bg-status-yellow/10 px-2.5 py-0.5 text-xs font-medium text-status-yellow border border-status-yellow/20">
+          <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-status-yellow"></span>
+          Đi trễ
+        </span>`;
+    }
+
+    return `
+      <span class="inline-flex items-center rounded-full bg-status-red/10 px-2.5 py-0.5 text-xs font-medium text-status-red border border-status-red/20">
+        <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-status-red"></span>
+        Vắng
+      </span>`;
+  }
+</script>
+
 </body></html>

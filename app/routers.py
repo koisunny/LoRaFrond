@@ -4,12 +4,12 @@ from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
 import requests
-from app.db import get_db_connection
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/views")
 # CSV_PATH = "sensor_data/sensor_data.csv"
 GSHEET_API = "https://script.google.com/macros/s/AKfycby_p53XC-svWWpZ30JBZARxrcOLPeMKQtKo1p6AIRc6s0_L_3ljpD0_pAIeFzmXFxMg/exec"
+FIREBASE_BASE_URL = "https://loradiemdanh-default-rtdb.asia-southeast1.firebasedatabase.app"
 
 def fetch_sheet_data():
     r = requests.get(GSHEET_API, timeout=15)
@@ -54,19 +54,24 @@ def function1_page(request: Request):
     return templates.TemplateResponse("dieukhienthietbi.html", {"request": request})
 @router.get("/function3")
 def function3_page(request: Request):
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    url = f"{FIREBASE_BASE_URL}/attendance/22DRTA1.json"
 
-    cursor.execute("""
-        SELECT ma_sv, ten_sv, trang_thai
-        FROM sinh_vien
-        WHERE ma_lop = '22DRTA1'
-        ORDER BY ten_sv
-    """)
+    r = requests.get(url, timeout=10)
+    r.raise_for_status()
+    data = r.json() or {}
 
-    sinh_vien = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    sinh_vien = []
+
+    for ma_sv, info in data.items():
+        sinh_vien.append({
+            "ma_sv": ma_sv,
+            "ten_sv": info.get("ten_sv", ""),
+            "trang_thai": info.get("trang_thai", "vang"),
+            "timestamp": info.get("timestamp")
+        })
+
+    # sort theo tên cho giống SQL cũ
+    sinh_vien.sort(key=lambda x: x["ten_sv"])
 
     return templates.TemplateResponse(
         "diemdanh.html",
