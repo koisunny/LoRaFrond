@@ -77,72 +77,51 @@
 <div class="flex gap-3">
 </div>
 </div>
+
 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-<div class="flex flex-col gap-1 rounded-xl border border-border-beige bg-white p-5 shadow-sm">
-<div class="flex items-center justify-between">
-<p class="text-sm font-medium text-text-sub">Tổng sinh viên</p>
-<span class="material-symbols-outlined text-text-sub">groups</span>
+
+  <!-- Tổng sinh viên -->
+  <div class="flex flex-col gap-1 rounded-xl border border-border-beige bg-white p-5 shadow-sm">
+    <div class="flex items-center justify-between">
+      <p class="text-sm font-medium text-text-sub">Tổng sinh viên</p>
+      <span class="material-symbols-outlined text-text-sub">groups</span>
+    </div>
+    <p id="total-count" class="text-3xl font-bold text-text-main">0</p>
+    <div class="flex items-center gap-1 text-xs text-text-sub">
+      <span>Sĩ số lớp</span>
+    </div>
+  </div>
+
+  <!-- Có mặt -->
+  <div class="flex flex-col gap-1 rounded-xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
+    <div class="flex items-center justify-between">
+      <p class="text-sm font-medium text-primary">Có mặt</p>
+      <span class="material-symbols-outlined text-primary">check_circle</span>
+    </div>
+    <p id="present-count" class="text-3xl font-bold text-text-main">0</p>
+  </div>
+
+  <!-- Đi trễ -->
+  <div class="flex flex-col gap-1 rounded-xl border border-status-yellow/30 bg-status-yellow/5 p-5 shadow-sm">
+    <div class="flex items-center justify-between">
+      <p class="text-sm font-medium text-status-yellow">Đi trễ</p>
+      <span class="material-symbols-outlined text-status-yellow">schedule</span>
+    </div>
+    <p id="late-count" class="text-3xl font-bold text-text-main">0</p>
+  </div>
+
+  <!-- Vắng -->
+  <div class="flex flex-col gap-1 rounded-xl border border-status-red/30 bg-status-red/5 p-5 shadow-sm">
+    <div class="flex items-center justify-between">
+      <p class="text-sm font-medium text-status-red">Vắng</p>
+      <span class="material-symbols-outlined text-status-red">person_off</span>
+    </div>
+    <p id="absent-count" class="text-3xl font-bold text-text-main">0</p>
+  </div>
+
 </div>
-<p class="text-3xl font-bold text-text-main">45</p>
-<div class="flex items-center gap-1 text-xs text-text-sub">
-<span>Sĩ số lớp</span>
-</div>
-</div>
-<div class="flex flex-col gap-1 rounded-xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
-<div class="flex items-center justify-between">
-<p class="text-sm font-medium text-primary">Có mặt</p>
-<span class="material-symbols-outlined text-primary">check_circle</span>
-</div>
-<p class="text-3xl font-bold text-text-main">42</p>
-<div class="flex items-center gap-1 text-xs text-primary">
-<span>+93% tỉ lệ tham gia</span>
-</div>
-</div>
-<div class="flex flex-col gap-1 rounded-xl border border-status-yellow/30 bg-status-yellow/5 p-5 shadow-sm">
-<div class="flex items-center justify-between">
-<p class="text-sm font-medium text-status-yellow">Đi trễ</p>
-<span class="material-symbols-outlined text-status-yellow">schedule</span>
-</div>
-<p class="text-3xl font-bold text-text-main">1</p>
-<div class="flex items-center gap-1 text-xs text-status-yellow">
-<span>Cần lưu ý nhắc nhở</span>
-</div>
-</div>
-<div class="flex flex-col gap-1 rounded-xl border border-status-red/30 bg-status-red/5 p-5 shadow-sm">
-<div class="flex items-center justify-between">
-<p class="text-sm font-medium text-status-red">Vắng</p>
-<span class="material-symbols-outlined text-status-red">person_off</span>
-</div>
-<p class="text-3xl font-bold text-text-main">2</p>
-<div class="flex items-center gap-1 text-xs text-status-red">
-<span>Không phép</span>
-</div>
-</div>
-</div>
-<div class="flex flex-col gap-4 sm:flex-row">
-<div class="relative flex-1">
-<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-<span class="material-symbols-outlined text-text-sub">search</span>
-</div>
-<input class="block w-full rounded-lg border border-border-beige bg-white py-3 pl-10 pr-3 text-sm text-text-main placeholder-text-sub focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Tìm kiếm theo Tên hoặc MSSV..." type="text"/>
-</div>
-<div class="flex gap-3">
-<div class="relative">
-<select class="h-full appearance-none rounded-lg border border-border-beige bg-white py-3 pl-4 pr-10 text-sm text-text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
-<option>Tất cả trạng thái</option>
-<option>Có mặt</option>
-<option>Vắng</option>
-<option>Đi trễ</option>
-</select>
-<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-sub">
-<span class="material-symbols-outlined text-sm">expand_more</span>
-</div>
-</div>
-<button class="flex h-full min-w-[44px] items-center justify-center rounded-lg border border-border-beige bg-white text-text-sub hover:border-primary hover:text-primary transition-colors">
-<span class="material-symbols-outlined">filter_list</span>
-</button>
-</div>
-</div>
+
+
 <div class="flex flex-col rounded-xl border border-border-beige bg-white shadow-sm overflow-hidden h-[340px]">
 <div class="flex-1 overflow-auto custom-scrollbar">
 <table class="w-full min-w-[500px] border-collapse text-left">
@@ -189,9 +168,13 @@
 </table>
 </div>
 </div>
+
+
 </div>
 </main>
 </div>
+
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -206,15 +189,15 @@
   const attendanceRef = ref(db, "attendance/22DRTA1");
 
   onValue(attendanceRef, (snapshot) => {
-    const data = snapshot.val();
+    const data = snapshot.val() || {};
+
     renderTable(data);
+    updateStats(data);
   });
 
   function renderTable(data) {
     const tbody = document.querySelector("tbody");
     tbody.innerHTML = "";
-
-    if (!data) return;
 
     Object.entries(data).forEach(([ma_sv, sv]) => {
       const statusBadge = getStatusBadge(sv.trang_thai);
@@ -230,6 +213,25 @@
       `;
       tbody.insertAdjacentHTML("beforeend", row);
     });
+  }
+
+  function updateStats(data) {
+    let total = 0;
+    let coMat = 0;
+    let tre = 0;
+    let vang = 0;
+
+    Object.values(data).forEach((sv) => {
+      total++;
+      if (sv.trang_thai === "co_mat") coMat++;
+      else if (sv.trang_thai === "tre") tre++;
+      else if (sv.trang_thai === "vang") vang++;
+    });
+
+    document.getElementById("total-count").innerText = total;
+    document.getElementById("present-count").innerText = coMat;
+    document.getElementById("late-count").innerText = tre;
+    document.getElementById("absent-count").innerText = vang;
   }
 
   function getStatusBadge(status) {
@@ -256,5 +258,7 @@
       </span>`;
   }
 </script>
+
+
 
 </body></html>
