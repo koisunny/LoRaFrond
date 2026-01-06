@@ -9,43 +9,56 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#2bee6c",
-              "background-light": "#f6f8f6",
-              "background-dark": "#102216",
-            },
-            fontFamily: {
-              "display": ["Manrope", "sans-serif"]
-            },
-            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-          },
+    tailwind.config = {
+    darkMode: false, // tắt dark mode cho đỡ u ám
+    theme: {
+        extend: {
+        colors: {
+            "primary": "#22c55e",          // xanh lá sáng, clean
+            "primary-soft": "#dcfce7",     // xanh nhạt nền
+            "background-light": "#ffffff",// nền trắng tinh
+            "surface": "#f8fafc",          // nền card
+            "border-soft": "#e5e7eb",      // border nhẹ
+            "text-main": "#0f172a",        // text chính
+            "text-sub": "#475569",         // text phụ
         },
-      }
+        fontFamily: {
+            display: ["Manrope", "sans-serif"]
+        },
+        borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "0.75rem",
+            "xl": "1rem",
+        },
+        },
+    },
+    }
     </script>
+
 <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
     </style>
 </head>
-<body class="font-display bg-background-light dark:bg-background-dark text-gray-800 dark:text-white">
+<body class="font-display bg-background-light text-text-main">
 <div class="relative flex h-auto min-h-screen w-full flex-col">
 <div class="layout-container flex h-full grow flex-col">
 <!-- TopNavBar Component -->
-<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 sm:px-6 lg:px-10 py-3 sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<header class="flex items-center justify-between whitespace-nowrap
+               border-b border-border-soft
+               px-4 sm:px-6 lg:px-10 py-3
+               sticky top-0 z-10
+               bg-white/90 backdrop-blur-sm shadow-sm">
 
     <!-- LEFT: Back button + Logo + Title -->
-    <div class="flex items-center gap-4 text-white shrink-0">
+    <div class="flex items-center gap-4 shrink-0 text-text-main">
 
         <!-- Nút quay lại -->
         <a href="/middle"
            class="flex h-10 w-10 items-center justify-center rounded-lg 
-                  bg-white/10 hover:bg-white/20 transition-colors">
-            <span class="material-symbols-outlined text-xl text-white">
+                  bg-primary-soft hover:bg-primary/20 transition-colors">
+            <span class="material-symbols-outlined text-xl text-primary">
                 arrow_back
             </span>
         </a>
@@ -57,12 +70,14 @@
             </svg>
         </div>
 
-        <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">
+        <!-- Title -->
+        <h2 class="text-lg font-bold leading-tight tracking-[-0.015em] text-text-main">
             Lớp Học Thông Minh
         </h2>
     </div>
 
 </header>
+
 <main class="flex flex-1 justify-center py-5">
 <div class="layout-content-container flex flex-col w-full max-w-7xl flex-1 px-4 sm:px-6 lg:px-8">
 <div class="flex flex-wrap items-center justify-between gap-4 py-6">

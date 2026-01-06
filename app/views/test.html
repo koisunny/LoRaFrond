@@ -1,48 +1,1015 @@
-async function fetchData() {
+<!DOCTYPE html>
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bảng điều khiển Giám sát Môi trường</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#2bee6c",
+              "background-light": "#f6f8f6",
+              "background-dark": "#102216",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-800 dark:text-white">
+<div class="relative flex h-auto min-h-screen w-full flex-col">
+<div class="layout-container flex h-full grow flex-col">
+<!-- TopNavBar Component -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 sm:px-6 lg:px-10 py-3 sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+
+    <!-- LEFT: Back button + Logo + Title -->
+    <div class="flex items-center gap-4 text-white shrink-0">
+
+        <!-- Nút quay lại -->
+        <a href="/middle"
+           class="flex h-10 w-10 items-center justify-center rounded-lg 
+                  bg-white/10 hover:bg-white/20 transition-colors">
+            <span class="material-symbols-outlined text-xl text-white">
+                arrow_back
+            </span>
+        </a>
+
+        <!-- Logo -->
+        <div class="size-6 text-primary">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H8l4-5v4h3l-4 5z"/>
+            </svg>
+        </div>
+
+        <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">
+            Lớp Học Thông Minh
+        </h2>
+    </div>
+
+</header>
+<main class="flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col w-full max-w-7xl flex-1 px-4 sm:px-6 lg:px-8">
+<div class="flex flex-wrap items-center justify-between gap-4 py-6">
+<div class="flex flex-col gap-2">
+<p class="text-gray-900 dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Bảng điều khiển Giám sát Môi trường</p>
+<p class="text-primary/80 dark:text-primary/60 text-base font-normal leading-normal">Dữ liệu thời gian thực về chất lượng môi trường xung quanh bạn.</p>
+</div>
+<div class="relative">
+<select class="appearance-none w-48 rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 py-2 pl-4 pr-10 text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50" id="room-select">
+<option value="room1">Phòng 1</option>
+<option value="room2">Phòng 2</option>
+</select>
+<span class="material-symbols-outlined pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">expand_more</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-3 py-3 overflow-x-auto">
+<p class="text-sm font-medium text-gray-600 dark:text-gray-400">Hiển thị dữ liệu cho:</p>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-1.5 rounded-lg bg-primary/20 dark:bg-primary/20 px-4 text-primary dark:text-primary text-sm font-bold">
+                        Hôm nay
+                    </button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-1.5 rounded-lg bg-gray-200 dark:bg-white/10 px-4 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-white/20 text-sm font-medium">
+                        7 ngày qua
+                    </button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-1.5 rounded-lg bg-gray-200 dark:bg-white/10 px-4 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-white/20 text-sm font-medium">
+                        Tháng này
+                    </button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-gray-200 dark:bg-white/10 pl-4 pr-3 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-white/20 text-sm font-medium">
+                        Tùy chỉnh
+                        <span class="material-symbols-outlined text-base">calendar_today</span>
+</button>
+
+<!---------------------------------4 ô dữ liệu số------------------------------------------------------->
+
+<div class="w-full max-w-7xl mx-auto">
+
+    <!-- HÀNG 1: 4 ô chính -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-4">
+
+        <!-- Nhiệt độ -->
+        <div class="flex flex-col gap-2 rounded-xl p-6 border border-white/10 
+                    bg-gray-50 dark:bg-white/5 min-h-[140px]">
+            <p class="text-gray-600 dark:text-gray-400 text-base font-medium leading-normal">Nhiệt độ</p>
+            <p id="temp-value" class="text-gray-900 dark:text-white text-3xl font-bold leading-tight">0°C</p>
+            <p id="temp-change" class="text-green-500 text-sm font-medium flex items-center gap-1">
+            </p>
+        </div>
+
+        <!-- Độ ẩm -->
+        <div class="flex flex-col gap-2 rounded-xl p-6 border border-white/10 
+                    bg-gray-50 dark:bg-white/5 min-h-[140px]">
+            <p class="text-gray-600 dark:text-gray-400 text-base font-medium">Độ ẩm</p>
+            <p id="humi-value" class="text-gray-900 dark:text-white text-3xl font-bold leading-tight">0%</p>
+            <p id="humi-change" class="text-red-500 text-sm font-medium flex items-center gap-1">
+            </p>
+        </div>
+
+        <!-- Áp suất -->
+        <div class="flex flex-col gap-2 rounded-xl p-6 border border-white/10 
+                    bg-gray-50 dark:bg-white/5 min-h-[140px]">
+            <p class="text-gray-600 dark:text-gray-400 text-base font-medium">Áp suất</p>
+            <p id="press-value" class="text-gray-900 dark:text-white text-3xl font-bold leading-tight">0 hPa</p>
+            <p id="press-change" class="text-green-500 text-sm font-medium flex items-center gap-1">
+            </p>
+        </div>
+
+        <!-- Ánh sáng -->
+        <div class="flex flex-col gap-2 rounded-xl p-6 border border-white/10 
+                    bg-gray-50 dark:bg-white/5 min-h-[140px]">
+            <p class="text-gray-600 dark:text-gray-400 text-base font-medium">Ánh sáng</p>
+            <p id="light-value" class="text-gray-900 dark:text-white text-3xl font-bold leading-tight">0 lux</p>
+            <p id="light-change" class="text-green-500 text-sm font-medium flex items-center gap-1"> 
+            </p>
+        </div>
+    </div>
+
+    <!-- HÀNG 2: Ô khí Gas -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 pb-4">
+        <div class="flex flex-col gap-2 rounded-xl p-6 border border-white/10 
+                    bg-gray-50 dark:bg-white/5 min-h-[140px] lg:col-span-1">
+            <p class="text-gray-600 dark:text-gray-400 text-base font-medium">Khí Gas</p>
+            <p id="gas-value" class="text-gray-900 dark:text-white text-3xl font-bold leading-tight">0 ppm</p>
+            <p id="gas-change" class="text-green-500 text-sm font-medium flex items-center gap-1">
+            </p>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+</div>
+<!---------------------------------------------------------------------------------------->
+
+<!---------------------------------5 bảng dữ liệu------------------------------------------------------->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 py-4">
+
+<head>
+    <style>
+        .fixed-width-num {
+            width: 120px;   /* quá đủ cho "29.88°C" */
+            display: inline-block;
+        }
+
+
+        .fixed-width-change {
+            display: inline-flex;
+            min-width: 60px;      /* chứa mũi tên + % */
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        .chart-box {
+            width: 100%;
+            height: 200px;      /* giữ đúng chiều cao bạn đang dùng */
+            position: relative;
+        }
+
+        .chart-box canvas {
+            width: 100% !important;
+            height: 100% !important;
+            position: absolute;
+            inset: 0;
+        }
+        .pressure-chart-fix {
+            height: 166px;   /* thử 170–180px, tìm mức vừa với bên ánh sáng */
+        }
+
+
+    </style>
+</head>
+
+<div class="flex flex-col gap-2 rounded-xl border border-white/10 p-6 bg-gray-50 dark:bg-white/5">
+        <p class="text-gray-900 dark:text-white text-base font-medium leading-normal">
+            Biến động Nhiệt độ (24 giờ qua)
+        </p>
+
+        <div class="flex items-baseline gap-2">
+        <p id="temp-24h-current"
+            class="text-gray-900 dark:text-white text-3xl font-bold fixed-width-num tabular-nums">
+            0°C
+        </p>
+
+        <div class="flex gap-1 fixed-width-change">
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">Hôm nay</p>
+        </div>
+    </div>
+
+
+
+    <div class="flex flex-col gap-4 py-4">
+        <!-- Khung cố định chiều cao cho biểu đồ -->
+        <div class="w-full" style="height: 200px;">
+            <canvas id="chart-temp"></canvas>
+        </div>
+
+        <!-- Nhãn giờ -->
+        <div class="flex justify-between">
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">00:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">04:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">08:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">12:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">16:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">20:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">24:00</p>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="flex flex-col gap-2 rounded-xl border border-white/10 p-6 bg-gray-50 dark:bg-white/5">
+
+    <p class="text-gray-900 dark:text-white text-base font-medium leading-normal">
+        Biến động Độ ẩm (24 giờ qua)
+    </p>
+
+    <!-- Hàng giá trị + % thay đổi -->
+    <div class="flex items-baseline gap-2">
+
+        <!-- GIÁ TRỊ HIỆN TẠI -->
+        <p id="humid-24h-current"
+           class="text-gray-900 dark:text-white text-3xl font-bold fixed-width-num tabular-nums">
+            0%
+        </p>
+
+        <!-- HÔM NAY + % thay đổi -->
+        <div class="flex gap-1 fixed-width-change">
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">Hôm nay</p>
+        </div>
+    </div>
+
+    <!-- BIỂU ĐỒ -->
+    <div class="flex flex-col gap-4 py-4">
+
+        <div class="w-full" style="height: 200px;">
+            <canvas id="chart-humid"></canvas>
+        </div>
+
+        <!-- Nhãn giờ -->
+        <div class="flex justify-between">
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">00:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">04:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">08:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">12:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">16:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">20:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">24:00</p>
+        </div>
+    </div>
+
+</div>
+
+<div class="flex flex-col gap-2 rounded-xl border border-white/10 p-6 bg-gray-50 dark:bg-white/5">
+    <p class="text-gray-900 dark:text-white text-base font-medium leading-normal">
+        Biến động Áp suất (24 giờ qua)
+    </p>
+
+    <div class="flex items-baseline gap-2">
+        <p id="pressure-24h-current"
+           class="text-gray-900 dark:text-white text-3xl font-bold fixed-width-num tabular-nums">
+            0 hPa
+        </p>
+
+        <div class="flex gap-1 fixed-width-change">
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">Hôm nay</p>
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-4 py-4">
+        <div class="chart-box pressure-chart-fix">
+            <canvas id="chart-pressure"></canvas>
+        </div>
+
+
+        <div class="flex justify-between">
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">00:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">04:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">08:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">12:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">16:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">20:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">24:00</p>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="flex flex-col gap-2 rounded-xl border border-white/10 p-6 bg-gray-50 dark:bg-white/5">
+    <p class="text-gray-900 dark:text-white text-base font-medium leading-normal">
+        Cường độ Ánh sáng (24 giờ qua)
+    </p>
+
+    <div class="flex items-baseline gap-2">
+        <p id="light-24h-current"
+           class="text-gray-900 dark:text-white text-3xl font-bold fixed-width-num tabular-nums">
+            0 lux
+        </p>
+
+        <div class="flex gap-1 fixed-width-change">
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">Hôm nay</p>
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-4 py-4">
+        <div class="chart-box">
+            <canvas id="chart-light"></canvas>
+        </div>
+
+        <div class="flex justify-between">
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">00:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">04:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">08:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">12:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">16:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">20:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">24:00</p>
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+<div class="flex flex-col gap-2 rounded-xl border border-white/10 p-6 bg-gray-50 dark:bg-white/5">
+    <p class="text-gray-900 dark:text-white text-base font-medium leading-normal">
+        Nồng độ Khí Gas trung bình theo giờ
+    </p>
+
+    <div class="flex items-baseline gap-2">
+        <p id="gas-24h-current"
+           class="text-gray-900 dark:text-white text-3xl font-bold fixed-width-num tabular-nums">
+            0 ppm
+        </p>
+
+        <div class="flex gap-1 fixed-width-change">
+            <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">Trong 24h</p>
+
+            <p id="gas-24h-change"
+               class="text-green-500 text-sm font-medium leading-normal flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">arrow_upward</span>0%
+            </p>
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-4 py-4">
+        <div class="w-full" style="height: 200px;">
+            <svg id="chart-gas" width="100%" height="100%" viewBox="0 0 500 200"
+                 preserveAspectRatio="none">
+                <path id="gas-area" fill="rgba(43,238,108,0.12)" stroke="none"></path>
+                <path id="gas-line" fill="none" stroke="#2bee6c"
+                      stroke-width="3" stroke-linecap="round"></path>
+            </svg>
+        </div>
+
+        <div class="flex justify-between">
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">00:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">04:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">08:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">12:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">16:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">20:00</p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs font-bold">24:00</p>
+        </div>
+    </div>
+</div>
+
+
+
+
+</div>
+<!---------------------------------------------------------------------------------------->
+</main>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+/* ===============================
+   1) HÀM CHUNG – ĐỌC BASELINE CSV 1 LẦN
+   =============================== */
+async function loadBaseline() {
     try {
-        const res = await fetch("/api/sensors/latest");
+        const res = await fetch('/api/sensors/baseline');
+
+        // 🚨 Quan trọng: check HTTP status
+        if (!res.ok) {
+            const text = await res.text();
+            console.error("Baseline API error:", text);
+            return null;
+        }
+
         const data = await res.json();
 
-        // ======================================================
-        // 1) Đưa realtime vào buffer để biểu đồ không rung
-        // ======================================================
-        realtimeBuffer.push({
-            Timestamp: data.timestamp,         // API phải trả timestamp
-            "Temp(C)": data.temp,
-            "Humidity(%)": data.humi,
-            "Pressure": data.press,
-            "Light(lux)": data.light,
-            "Gas": data.gas
-        });
+        const ensure24 = (arr) => {
+            if (!Array.isArray(arr)) arr = [];
 
-        // giữ buffer tối đa 24 giờ
-        if (realtimeBuffer.length > 86400) realtimeBuffer.shift();
-        // ======================================================
+            const out = arr.slice(0, 24);
 
+            while (out.length < 24) out.push(null);
 
-        // ======================================================
-        // 2) Update 5 ô dữ liệu số (giữ nguyên như bạn làm)
-        // ======================================================
-        document.getElementById("temp-value").innerText = data.temp + "°C";
-        document.getElementById("humi-value").innerText = data.humi + "%";
-        document.getElementById("press-value").innerText = data.press + " hPa";
-        document.getElementById("light-value").innerText = data.light + " lux";
-        document.getElementById("gas-value").innerText = data.gas + " ppm";
-        document.getElementById("temp-24h-current").innerText = data.temp + "°C";
-        document.getElementById("humid-24h-current").innerText = data.humi + "%";
-        document.getElementById("pressure-24h-current").innerText = data.press + " hPa";
-        document.getElementById("light-24h-current").innerText = data.light + " lux";
+            return out.map(v => {
+                if (v === null || v === undefined || v === "") return null;
+                const num = Number(v);
+                return Number.isNaN(num) ? null : num;
+            });
+        };
+
+        const baseline = {
+            temp: ensure24(data.temp),
+            humid: ensure24(data.humid),
+            press: ensure24(data.press),
+            light: ensure24(data.light),
+            gas: ensure24(data.gas)
+        };
+
+        console.log("Baseline loaded:", baseline);
+        return baseline;
+
     } catch (e) {
-        console.log("Lỗi khi lấy dữ liệu:", e);
+        console.error("loadBaseline error:", e);
+        return null; // ❗ KHÔNG fill 0
     }
 }
 
-setInterval(fetchData, 1000);
+
+/* ===============================
+   2) Load realtime từ API history
+   =============================== */
+async function loadRealtimeHistory() {
+  try {
+    const res = await fetch('/api/sensors/history', { cache: "no-store" });
+    const json = await res.json();
+
+    if (!json || !Array.isArray(json.data)) {
+      console.warn('loadRealtimeHistory: unexpected response', json);
+      return [];
+    }
+
+    // lọc bỏ các row không có Timestamp hoặc Timestamp rỗng
+    const rows = json.data.filter(r =>
+        r &&
+        typeof r.Timestamp === 'string' &&
+        r.Timestamp.includes(" ") &&          // đảm bảo có giờ
+        r[fieldName] !== null &&
+        r[fieldName] !== undefined
+    );
+
+
+    return rows;
+  } catch (e) {
+    console.error('loadRealtimeHistory error', e);
+    return [];
+  }
+}
+
+/* ===============================
+   3) Gộp baseline + realtime theo giờ
+   =============================== */
+function mergeData(baseline, rows, fieldName) {
+    const hourly = Array.from({ length: 24 }, () => []);
+
+    rows.forEach(r => {
+        if (!r || !r.Timestamp) return;
+
+        const time = r.Timestamp.includes(" ")
+            ? r.Timestamp.split(" ")[1]
+            : r.Timestamp.split("T")[1];
+        if (!time) return;
+
+        const h = parseInt(time.split(":")[0]);
+        if (isNaN(h) || h < 0 || h > 23) return;
+
+        const v = Number(r[fieldName]);
+        if (!Number.isNaN(v)) hourly[h].push(v);
+    });
+
+    const realtimeAvg = hourly.map(arr => {
+        if (!arr.length) return null;
+        return arr.reduce((a, b) => a + b, 0) / arr.length;
+    });
+
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    const merged = new Array(24).fill(null);
+
+    for (let h = 0; h < 24; h++) {
+        if (h > currentHour) {
+            merged[h] = null;
+            continue;
+        }
+
+        if (realtimeAvg[h] !== null) {
+            merged[h] = realtimeAvg[h];
+        } else if (baseline[h] !== undefined && baseline[h] !== null) {
+            merged[h] = baseline[h];
+        } else {
+            merged[h] = null;
+        }
+    }
+
+    return merged;
+}
+
+
+function updateHourlyInfo(data24, field) {
+    const now = new Date();
+    const curHour = now.getHours();
+
+    const current = data24[curHour] ?? 0;
+    const prev = data24[curHour - 1] ?? current;
+
+    let change = 0;
+    if (prev !== 0) change = ((current - prev) / prev) * 100;
+
+    const rounded = change.toFixed(1);
+
+    document.getElementById(field.valueId).innerText =
+        current.toFixed(1) + field.unit;
+
+    const icon = change >= 0 ? "arrow_upward" : "arrow_downward";
+    const color = change >= 0 ? "text-green-500" : "text-red-500";
+
+    const el = document.getElementById(field.changeId);
+    el.innerHTML = `
+        <span class="material-symbols-outlined text-sm">${icon}</span>
+        ${rounded}%
+    `;
+    el.className =
+        `text-sm font-medium leading-normal flex items-center gap-1 ${color}`;
+}
+
+/* ===============================
+   4) VẼ BIỂU ĐỒ NHIỆT ĐỘ
+   =============================== */
+let tempChart = null;
+
+function renderTempChart(data24) {
+  const ctx = document.getElementById("chart-temp").getContext("2d");
+  const labels25 = Array.from({ length: 25 }, (_, i) => String(i).padStart(2,'0') + ":00");
+  const dataset25 = [...data24.slice(0,24)];
+
+  if (tempChart) tempChart.destroy();
+
+  tempChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels25,
+      datasets: [{
+        data: dataset25,
+        borderColor: "#2bee6c",
+        backgroundColor: "rgba(43,238,108,0.12)",
+        borderWidth: 3,
+        pointRadius: 0,
+        tension: 0.35,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: false,
+      transitions: { active: { animation: false }, resize: { animation: false } },
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false, min: 0, max: 50 } }
+    }
+  });
+}
+
+function updateTempChart(newData) {
+  if (!tempChart) return;
+  // đảm bảo length =24
+  const d = newData.slice(0,24);
+  while (d.length < 24) d.push(0);
+  tempChart.data.datasets[0].data = [...d, null];
+  tempChart.update('none'); // update nhẹ, không animation
+}
+
+async function startTempChart(baseline, history) {
+  try {
+           
+
+    const merged = mergeData(baseline.temp, history, "Temp(C)");
+    renderTempChart(merged);
+
+    // cập nhật nhẹ: mỗi 10s chỉ cập nhật data (không destroy)
+    setInterval(async () => {
+      try {
+        const mergedNow = mergeData(baseline.temp, realtimeBuffer, "Temp(C)");
+        updateTempChart(mergedNow);
+        // không còn updateHourlyInfo
+      } catch (err) {
+        console.error('temp update failed', err);
+      }
+    }, 10000);
+
+  } catch (e) {
+    console.error('startTempChart failed', e);
+  }
+}
+
+
+//////////////////////////////////////
+
+/* ===============================
+   BIỂU ĐỒ ĐỘ ẨM 24 GIỜ
+   =============================== */
+let humidChart = null;
+
+function renderHumidChart(data24) {
+    const ctx = document.getElementById("chart-humid").getContext("2d");
+
+    const labels25 = Array.from({ length: 25 }, (_, i) =>
+        String(i).padStart(2,'0') + ":00"
+    );
+
+    const dataset25 = [...data24.slice(0,24)];
+
+    if (humidChart) humidChart.destroy();
+
+    humidChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: labels25,
+            datasets: [{
+                data: dataset25,
+                borderColor: "#2bee6c",
+                backgroundColor: "rgba(43,238,108,0.12)",
+                borderWidth: 3,
+                pointRadius: 0,
+                tension: 0.35,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            transitions: { active: { animation: false }, resize: { animation: false } },
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: {
+                x: { display: false },
+                y: { display: false, min: 0, max: 100 }   // độ ẩm 0→100%
+            }
+        }
+    });
+}
+
+function updateHumidChart(newData) {
+    if (!humidChart) return;
+
+    const d = newData.slice(0,24);
+    while (d.length < 24) d.push(0);
+
+    humidChart.data.datasets[0].data = [...d, null];
+    humidChart.update('none');
+}
+
+
+async function startHumidChart(baseline, history) {
+    try {
+        
+
+        let merged = mergeData(baseline.humid, history, "Humidity(%)");
+        renderHumidChart(merged);
+
+        // bỏ updateHourlyInfo
+
+        setInterval(async () => {
+            try {
+                const mergedNow = mergeData(baseline.humid, realtimeBuffer, "Humidity(%)");
+                updateHumidChart(mergedNow);
+                // không updateHourlyInfo
+            } catch (err) {
+                console.error("update humid failed", err);
+            }
+        }, 10000);
+
+    } catch (e) {
+        console.error("startHumidChart failed", e);
+    }
+}
+
+/* ===============================
+   BIỂU ĐỒ ÁP SUẤT 24 GIỜ
+   =============================== */
+let pressChart = null;
+
+function renderPressChart(data24) {
+    const ctx = document.getElementById("chart-pressure").getContext("2d");
+
+
+    const labels25 = Array.from({ length: 25 }, (_, i) =>
+        String(i).padStart(2, "0") + ":00"
+    );
+
+    const dataset25 = [...data24.slice(0,24)];
+
+
+    pressChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: labels25,
+            datasets: [{
+                label: "Pressure",
+                data: dataset25,
+                borderColor: "#2bee6c",
+                backgroundColor: "rgba(43,238,108,0.12)",
+                borderWidth: 3,
+                pointRadius: 0,
+                tension: 0.35,
+                fill: true
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            transitions: {
+                active: { animation: false },
+                resize: { animation: false }
+            },
+
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: false }
+            },
+
+            scales: {
+                x: { display: false },
+                y: { display: false }
+            }
+        }
+    });
+}
+
+function updatePressChart(newData) {
+    if (!pressChart) return;
+    pressChart.data.datasets[0].data = newData;
+    pressChart.update("quiet");
+}
+
+async function startPressChart(baseline, history) {
+    
+
+    let merged = mergeData(baseline.press, history, "Pressure");
+    renderPressChart(merged);
+
+    // bỏ updateHourlyInfo
+
+    setInterval(async () => {
+        const mergedNow = mergeData(baseline.press, realtimeBuffer, "Pressure");
+        updatePressChart(mergedNow);
+        // không updateHourlyInfo
+    }, 10000);
+}
+
+/* ===============================
+   BIỂU ĐỒ ÁNH SÁNG 24 GIỜ
+   =============================== */
+let lightChart = null;
+
+function renderLightChart(data24) {
+    const ctx = document.getElementById("chart-light").getContext("2d");
+
+    const labels25 = Array.from({ length: 25 }, (_, i) =>
+        String(i).padStart(2, "0") + ":00"
+    );
+
+    const dataset25 = [...data24.slice(0,24)];
+
+    lightChart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: labels25,
+            datasets: [{
+                label: "Light",
+                data: dataset25,
+                borderColor: "#2bee6c",
+                backgroundColor: "rgba(43,238,108,0.12)",
+                borderWidth: 3,
+                pointRadius: 0,
+                tension: 0.35,
+                fill: true
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            transitions: {
+                active: { animation: false },
+                resize: { animation: false }
+            },
+
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: false }
+            },
+
+            scales: {
+                x: { display: false },
+                y: { display: false }
+            }
+        }
+    });
+}
+
+function updateLightChart(newData) {
+    if (!lightChart) return;
+    lightChart.data.datasets[0].data = newData;
+    lightChart.update("quiet");
+}
+
+async function startLightChart(baseline, history) {
+    
+
+    let merged = mergeData(baseline.light, history, "Light(lux)");
+    renderLightChart(merged);
+
+    // bỏ updateHourlyInfo
+
+    setInterval(async () => {
+        const mergedNow = mergeData(baseline.light, realtimeBuffer, "Light(lux)");
+        updateLightChart(mergedNow);
+        // không updateHourlyInfo
+    }, 10000);
+}
+
+
+function renderGasChart(data24) {
+    const svgW = 500;
+    const svgH = 200;
+
+    const data = data24.slice(0, 24);
+
+    const valid = data.filter(v => v != null);
+    const max = valid.length ? Math.max(...valid) : 1;
+
+    let lineParts = [];
+    let areaParts = [];
+
+    // tìm giờ cuối có dữ liệu
+    let lastIndex = -1;
+    for (let i = 23; i >= 0; i--) {
+        if (data[i] != null) {
+            lastIndex = i;
+            break;
+        }
+    }
+
+    for (let i = 0; i < data.length; i++) {
+        const v = data[i];
+        const x = (i / 23) * svgW;
+
+        if (v == null) {
+            lineParts.push("M" + x + "," + svgH);
+            continue;
+        }
+
+        const y = svgH - (v / max) * (svgH - 10);
+
+        lineParts.push((lineParts.length ? "L" : "M") + x + "," + y);
+
+        // area chỉ thêm đến lastIndex
+        if (i <= lastIndex) {
+            areaParts.push(x + "," + y);
+        }
+    }
+
+    // AREA: chỉ kết thúc tại lastIndex, không kéo tới 24:00
+    let areaPath = "M0," + svgH;
+    if (areaParts.length > 0) {
+        areaPath += " L" + areaParts.join(" L");
+        // điểm cuối tại lastIndex
+        const endX = (lastIndex / 23) * svgW;
+        areaPath += " L" + endX + "," + svgH + " Z";
+    }
+
+    const linePath = lineParts.join(" ");
+
+    document.getElementById("gas-line").setAttribute("d", linePath);
+    document.getElementById("gas-area").setAttribute("d", areaPath);
+}
 
 
 
+function startGasChart(baseline, history) {
+  const merged = mergeData(baseline.gas, history, "Gas");
+  renderGasChart(merged);
+
+  updateHourlyInfo(merged, {
+    valueId: "gas-24h-current",
+    changeId: "gas-24h-change",
+    unit: " ppm"
+  });
+
+  setInterval(() => {
+    const mergedNow = mergeData(baseline.gas, realtimeBuffer, "Gas");
+    updateGasChart(mergedNow);
+
+    updateHourlyInfo(mergedNow, {
+      valueId: "gas-24h-current",
+      changeId: "gas-24h-change",
+      unit: " ppm"
+    });
+  }, 10000);
+}
+
+
+async function initAllCharts() {
+    try {
+        const baseline = await loadBaseline();
+        if (!baseline) {
+            console.error("Baseline null, abort charts");
+            return;
+        }
+
+        const history = await loadRealtimeHistory();
+
+        startTempChart(baseline, history);
+        startHumidChart(baseline, history);
+        startPressChart(baseline, history);
+        startLightChart(baseline, history);
+        startGasChart(baseline, history);
+
+    } catch (err) {
+        console.error("initAllCharts failed", err);
+    }
+}
 
 
 
+////////////////////////////////////
+let realtimeBuffer = [];   // lưu dữ liệu realtime theo phút / giây
 
 
+
+async function fetchData() {
+  try {
+    const res = await fetch("/api/sensors/latest");
+    const data = await res.json();
+
+    const temp  = Number.isFinite(Number(data.temp))  ? Number(data.temp)  : lastValid.temp;
+    const humi  = Number.isFinite(Number(data.humi))  ? Number(data.humi)  : lastValid.humi;
+    const press = Number.isFinite(Number(data.press)) ? Number(data.press) : lastValid.press;
+    const light = Number.isFinite(Number(data.light)) ? Number(data.light) : lastValid.light;
+    const gas   = Number.isFinite(Number(data.gas))   ? Number(data.gas)   : lastValid.gas;
+
+    // cập nhật giá trị hợp lệ cuối
+    lastValid = { temp, humi, press, light, gas };
+
+    realtimeBuffer.push({
+      Timestamp: data.timestamp,
+      "Temp(C)": temp,
+      "Humidity(%)": humi,
+      "Pressure": press,
+      "Light(lux)": light,
+      "Gas": gas
+    });
+
+    if (realtimeBuffer.length > 600) realtimeBuffer.shift();
+
+    document.getElementById("temp-value").innerText  = temp.toFixed(1) + "°C";
+    document.getElementById("humi-value").innerText  = humi.toFixed(1) + "%";
+    document.getElementById("press-value").innerText = press.toFixed(0) + " hPa";
+    document.getElementById("light-value").innerText = light.toFixed(0) + " lux";
+    document.getElementById("gas-value").innerText   = gas.toFixed(0) + " ppm";
+
+    document.getElementById("temp-24h-current").innerText  = temp.toFixed(1) + "°C";
+    document.getElementById("humid-24h-current").innerText= humi.toFixed(1) + "%";
+    document.getElementById("pressure-24h-current").innerText = press.toFixed(0) + " hPa";
+    document.getElementById("light-24h-current").innerText = light.toFixed(0) + " lux";
+
+  } catch (e) {
+    console.log("Lỗi khi lấy dữ liệu:", e);
+  }
+}
+fetchData();
+setInterval(fetchData, 10000);
+initAllCharts();
+
+
+
+</script>
+
+</body></html>
