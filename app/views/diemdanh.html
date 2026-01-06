@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Điểm danh - SmartClass LoRa</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;family=Noto+Sans:wght@300..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#45cf17",
+                        "background-main": "#ffffff",
+                        "surface-white": "#ffffff",
+                        "surface-offset": "#f8f9fa",
+                        "border-beige": "#dcded5",
+                        "text-main": "#111827",
+                        "text-sub": "#6b7280",
+                        "accent-beige": "#8a9685",
+                        "status-red": "#ef4444",
+                        "status-yellow": "#eab308",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-main font-display text-text-main overflow-x-hidden antialiased">
+<div class="relative flex min-h-screen flex-col">
+<header class="flex items-center justify-between whitespace-nowrap
+               border-b border-border-soft
+               px-4 sm:px-6 lg:px-10 py-3
+               sticky top-0 z-10
+               bg-white/90 backdrop-blur-sm shadow-sm">
+
+    <!-- LEFT: Back button + Logo + Title -->
+    <div class="flex items-center gap-4 shrink-0 text-text-main">
+
+        <!-- Nút quay lại -->
+        <a href="/middle"
+           class="flex h-10 w-10 items-center justify-center rounded-lg 
+                  bg-primary-soft hover:bg-primary/20 transition-colors">
+            <span class="material-symbols-outlined text-xl text-primary">
+                arrow_back
+            </span>
+        </a>
+
+        <!-- Logo -->
+        <div class="size-6 text-primary">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H8l4-5v4h3l-4 5z"/>
+            </svg>
+        </div>
+
+        <!-- Title -->
+        <h2 class="text-lg font-bold leading-tight tracking-[-0.015em] text-text-main">
+            Lớp Học Thông Minh
+        </h2>
+    </div>
+
+</header>
+<main class="flex-1 px-4 py-8 md:px-6 lg:px-40">
+<div class="mx-auto flex max-w-[960px] flex-col gap-8">
+<div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+<div class="flex flex-col gap-2">
+<h1 class="text-3xl font-black leading-tight tracking-tight text-text-main md:text-4xl">Danh sách sinh viên</h1>
+</div>
+<div class="flex gap-3">
+</div>
+</div>
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+<div class="flex flex-col gap-1 rounded-xl border border-border-beige bg-white p-5 shadow-sm">
+<div class="flex items-center justify-between">
+<p class="text-sm font-medium text-text-sub">Tổng sinh viên</p>
+<span class="material-symbols-outlined text-text-sub">groups</span>
+</div>
+<p class="text-3xl font-bold text-text-main">45</p>
+<div class="flex items-center gap-1 text-xs text-text-sub">
+<span>Sĩ số lớp</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 rounded-xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
+<div class="flex items-center justify-between">
+<p class="text-sm font-medium text-primary">Có mặt</p>
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</div>
+<p class="text-3xl font-bold text-text-main">42</p>
+<div class="flex items-center gap-1 text-xs text-primary">
+<span>+93% tỉ lệ tham gia</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 rounded-xl border border-status-yellow/30 bg-status-yellow/5 p-5 shadow-sm">
+<div class="flex items-center justify-between">
+<p class="text-sm font-medium text-status-yellow">Đi trễ</p>
+<span class="material-symbols-outlined text-status-yellow">schedule</span>
+</div>
+<p class="text-3xl font-bold text-text-main">1</p>
+<div class="flex items-center gap-1 text-xs text-status-yellow">
+<span>Cần lưu ý nhắc nhở</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 rounded-xl border border-status-red/30 bg-status-red/5 p-5 shadow-sm">
+<div class="flex items-center justify-between">
+<p class="text-sm font-medium text-status-red">Vắng</p>
+<span class="material-symbols-outlined text-status-red">person_off</span>
+</div>
+<p class="text-3xl font-bold text-text-main">2</p>
+<div class="flex items-center gap-1 text-xs text-status-red">
+<span>Không phép</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4 sm:flex-row">
+<div class="relative flex-1">
+<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+<span class="material-symbols-outlined text-text-sub">search</span>
+</div>
+<input class="block w-full rounded-lg border border-border-beige bg-white py-3 pl-10 pr-3 text-sm text-text-main placeholder-text-sub focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Tìm kiếm theo Tên hoặc MSSV..." type="text"/>
+</div>
+<div class="flex gap-3">
+<div class="relative">
+<select class="h-full appearance-none rounded-lg border border-border-beige bg-white py-3 pl-4 pr-10 text-sm text-text-main focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+<option>Tất cả trạng thái</option>
+<option>Có mặt</option>
+<option>Vắng</option>
+<option>Đi trễ</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-text-sub">
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</div>
+</div>
+<button class="flex h-full min-w-[44px] items-center justify-center rounded-lg border border-border-beige bg-white text-text-sub hover:border-primary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col rounded-xl border border-border-beige bg-white shadow-sm overflow-hidden h-[340px]">
+<div class="flex-1 overflow-auto custom-scrollbar">
+<table class="w-full min-w-[500px] border-collapse text-left">
+<thead>
+<tr class="bg-surface-offset">
+<th class="sticky top-0 z-10 bg-surface-offset border-b border-border-beige p-4 text-xs font-medium uppercase tracking-wider text-text-sub w-1/2">Sinh viên</th>
+<th class="sticky top-0 z-10 bg-surface-offset border-b border-border-beige p-4 text-xs font-medium uppercase tracking-wider text-text-sub">Mã số SV</th>
+<th class="sticky top-0 z-10 bg-surface-offset border-b border-border-beige p-4 text-xs font-medium uppercase tracking-wider text-text-sub text-right">Trạng thái</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-beige">
+{% for sv in sinh_vien %}
+<tr class="group hover:bg-surface-offset transition-colors">
+    <td class="p-4">
+        <p class="font-medium text-text-main">{{ sv.ten_sv }}</p>
+    </td>
+
+    <td class="p-4 text-sm text-text-sub font-mono">
+        {{ sv.ma_sv }}
+    </td>
+
+    <td class="p-4 text-right">
+        {% if sv.trang_thai == 'co_mat' %}
+            <span class="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary border border-primary/20">
+                <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-primary"></span>
+                Có mặt
+            </span>
+        {% elif sv.trang_thai == 'tre' %}
+            <span class="inline-flex items-center rounded-full bg-status-yellow/10 px-2.5 py-0.5 text-xs font-medium text-status-yellow border border-status-yellow/20">
+                <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-status-yellow"></span>
+                Đi trễ
+            </span>
+        {% else %}
+            <span class="inline-flex items-center rounded-full bg-status-red/10 px-2.5 py-0.5 text-xs font-medium text-status-red border border-status-red/20">
+                <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-status-red"></span>
+                Vắng
+            </span>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

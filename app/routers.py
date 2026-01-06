@@ -4,6 +4,7 @@ from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
 import requests
+from app.db import get_db_connection
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/views")
@@ -29,7 +30,6 @@ def parse_datetime(ts: str) -> datetime:
     except:
         # Sheet thường: 2025-12-20 01:05
         return datetime.strptime(ts, "%Y-%m-%d %H:%M")
-
 @router.get("/")
 def start_page(request: Request):
     return templates.TemplateResponse("start.html", {"request": request})
@@ -52,7 +52,29 @@ def thongtin_page(request: Request):
 @router.get("/function2")
 def function1_page(request: Request):
     return templates.TemplateResponse("dieukhienthietbi.html", {"request": request})
+@router.get("/function3")
+def function3_page(request: Request):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
 
+    cursor.execute("""
+        SELECT ma_sv, ten_sv, trang_thai
+        FROM sinh_vien
+        WHERE ma_lop = '22DRTA1'
+        ORDER BY ten_sv
+    """)
+
+    sinh_vien = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return templates.TemplateResponse(
+        "diemdanh.html",
+        {
+            "request": request,
+            "sinh_vien": sinh_vien
+        }
+    )
 
 
 
