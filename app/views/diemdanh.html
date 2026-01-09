@@ -72,7 +72,7 @@
 <div class="mx-auto flex max-w-[960px] flex-col gap-8">
 <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
 <div class="flex flex-col gap-2">
-<h1 class="text-3xl font-black leading-tight tracking-tight text-text-main md:text-4xl">Danh sách sinh viên</h1>
+<h1 class="text-3xl font-black leading-tight tracking-tight text-text-main md:text-4xl">Điểm danh sinh viên</h1>
 </div>
 <div class="flex gap-3">
 </div>
@@ -91,11 +91,22 @@
       <span>Sĩ số lớp</span>
     </div>
   </div>
+  <!-- Có mặt (tổng) -->
+  <div class="flex flex-col gap-1 rounded-xl border border-emerald-300 bg-emerald-50 p-5 shadow-sm">
+    <div class="flex items-center justify-between">
+      <p class="text-sm font-medium text-emerald-600">Có mặt</p>
+      <span class="material-symbols-outlined text-emerald-600">how_to_reg</span>
+    </div>
+    <p id="present-total-count" class="text-3xl font-bold text-text-main">0</p>
+    <div class="flex items-center gap-1 text-xs text-emerald-600">
+      <span>Đúng giờ + Đi trễ</span>
+    </div>
+  </div>
 
   <!-- Có mặt -->
   <div class="flex flex-col gap-1 rounded-xl border border-primary/20 bg-primary/5 p-5 shadow-sm">
     <div class="flex items-center justify-between">
-      <p class="text-sm font-medium text-primary">Có mặt</p>
+      <p class="text-sm font-medium text-primary">Đúng giờ</p>
       <span class="material-symbols-outlined text-primary">check_circle</span>
     </div>
     <p id="present-count" class="text-3xl font-bold text-text-main">0</p>
@@ -228,11 +239,15 @@
       else if (sv.trang_thai === "vang") vang++;
     });
 
+    const presentTotal = coMat + tre;
+
     document.getElementById("total-count").innerText = total;
-    document.getElementById("present-count").innerText = coMat;
-    document.getElementById("late-count").innerText = tre;
-    document.getElementById("absent-count").innerText = vang;
+    document.getElementById("present-count").innerText = coMat;      // đúng giờ
+    document.getElementById("late-count").innerText = tre;           // trễ
+    document.getElementById("absent-count").innerText = vang;        // vắng
+    document.getElementById("present-total-count").innerText = presentTotal; // có mặt tổng
   }
+
 
   function getStatusBadge(status) {
     if (status === "co_mat") {

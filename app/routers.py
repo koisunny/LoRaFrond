@@ -9,7 +9,7 @@ router = APIRouter()
 templates = Jinja2Templates(directory="app/views")
 # CSV_PATH = "sensor_data/sensor_data.csv"
 GSHEET_API = "https://script.google.com/macros/s/AKfycby_p53XC-svWWpZ30JBZARxrcOLPeMKQtKo1p6AIRc6s0_L_3ljpD0_pAIeFzmXFxMg/exec"
-FIREBASE_BASE_URL = "https://loradiemdanh-default-rtdb.asia-southeast1.firebasedatabase.app"
+FIREBASE_BASE_URL_DIEMDANH = "https://loradiemdanh-default-rtdb.asia-southeast1.firebasedatabase.app"
 
 def fetch_sheet_data():
     r = requests.get(GSHEET_API, timeout=15)
@@ -54,7 +54,7 @@ def function1_page(request: Request):
     return templates.TemplateResponse("dieukhienthietbi.html", {"request": request})
 @router.get("/function3")
 def function3_page(request: Request):
-    url = f"{FIREBASE_BASE_URL}/attendance/22DRTA1.json"
+    url = f"{FIREBASE_BASE_URL_DIEMDANH}/attendance/22DRTA1.json"
 
     r = requests.get(url, timeout=10)
     r.raise_for_status()

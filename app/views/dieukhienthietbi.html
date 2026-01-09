@@ -1,148 +1,171 @@
 <!DOCTYPE html>
-<html class="dark" lang="vi"><head>
+<html lang="vi">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Điều khiển Thiết bị</title>
+
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#39E079", "background-light": "#f6f8f7", "background-dark": "#122017", "accent-beige": "#c5b9a5"}, fontFamily: {display: "Manrope"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}}}};</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: "#45cf17",
+        "background-main": "#ffffff",
+        "surface-offset": "#f8f9fa",
+        "border-beige": "#dcded5",
+        "text-main": "#111827",
+        "text-sub": "#6b7280",
+        "status-green": "#22c55e",
+        "status-yellow": "#eab308",
+        "status-red": "#ef4444"
+      },
+      fontFamily: {
+        display: ["Manrope", "sans-serif"]
+      }
+    }
+  }
+};
+</script>
+
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-    </style>
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+}
+</style>
 </head>
-<body class="font-display">
-<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
-<div class="layout-container flex h-full grow flex-col">
-<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 sm:px-6 lg:px-10 py-3 sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
 
-    <!-- LEFT: Back button + Logo + Title -->
-    <div class="flex items-center gap-4 text-white shrink-0">
+<body class="font-display bg-background-main text-text-main">
 
-        <!-- Nút quay lại -->
-        <a href="/middle"
-           class="flex h-10 w-10 items-center justify-center rounded-lg 
-                  bg-white/10 hover:bg-white/20 transition-colors">
-            <span class="material-symbols-outlined text-xl text-white">
-                arrow_back
-            </span>
-        </a>
+<div class="min-h-screen flex flex-col">
 
-        <!-- Logo -->
-        <div class="size-6 text-primary">
-            <svg fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H8l4-5v4h3l-4 5z"/>
-            </svg>
-        </div>
+<header class="flex items-center justify-between border-b border-border-beige px-6 py-3 bg-white shadow-sm">
+  <div class="flex items-center gap-4">
+    <a href="/middle" class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 hover:bg-primary/20">
+      <span class="material-symbols-outlined text-primary">arrow_back</span>
+    </a>
 
-        <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">
-            Lớp Học Thông Minh
-        </h2>
+    <div class="size-6 text-primary">
+      <svg fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H8l4-5v4h3l-4 5z"/>
+      </svg>
     </div>
 
-
+    <h2 class="text-lg font-bold">Lớp Học Thông Minh</h2>
+  </div>
 </header>
-<main class="flex-1 px-4 py-8 md:px-10 md:py-12">
-<div class="mx-auto max-w-5xl">
-<div class="flex flex-wrap justify-between gap-3 p-4">
-<div class="flex min-w-72 flex-col gap-2">
-<p class="text-4xl font-black leading-tight tracking-[-0.033em] text-black dark:text-white">Điều khiển Thiết bị</p>
-<p class="text-base font-normal leading-normal text-slate-600 dark:text-slate-400">Quản lý trạng thái các thiết bị trong phòng học.</p>
+
+<main class="flex-1 px-6 py-10">
+<div class="max-w-5xl mx-auto">
+
+<div class="mb-8">
+  <h1 class="text-4xl font-black">Điều khiển Thiết bị</h1>
+  <p class="text-text-sub mt-1">Quản lý trạng thái các thiết bị trong phòng học</p>
 </div>
-</div>
-<div class="p-4">
-<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2">
-<div class="relative flex flex-col gap-6 overflow-hidden rounded-xl border border-accent-beige/40 bg-white/5 p-6 shadow-sm dark:bg-[#1C2431]">
-<div class="absolute inset-x-0 top-0 h-1.5 bg-accent-beige"></div>
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-4">
-<div class="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-<span class="material-symbols-outlined !text-3xl">lightbulb</span>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+<!-- ĐÈN -->
+<div class="relative rounded-xl border border-border-beige bg-white p-6 shadow-sm">
+<div class="absolute top-0 inset-x-0 h-1.5 bg-primary"></div>
+<div class="flex justify-between items-center">
+<div class="flex gap-4 items-center">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">lightbulb</span>
 </div>
 <div>
-<p class="text-lg font-bold text-black dark:text-white">Đèn</p>
+<p class="text-lg font-bold">Đèn</p>
 <div class="flex items-center gap-2">
-<div class="size-2 rounded-full bg-green-500"></div>
-<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Đang Bật</p>
+<div class="size-2 bg-status-green rounded-full"></div>
+<p class="text-sm text-status-green font-medium">Đang bật</p>
 </div>
 </div>
 </div>
-<label class="relative inline-flex cursor-pointer items-center">
-<input checked="" class="peer sr-only" type="checkbox" value=""/>
-<div class="peer h-7 w-12 rounded-full bg-slate-200 after:absolute after:start-[4px] after:top-[4px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none dark:border-gray-600 dark:bg-slate-700"></div>
+<label class="inline-flex items-center cursor-pointer">
+<input type="checkbox" checked class="sr-only peer"/>
+<div class="w-12 h-7 bg-slate-200 rounded-full peer-checked:bg-primary relative after:absolute after:top-1 after:left-1 after:h-5 after:w-5 after:bg-white after:rounded-full after:transition peer-checked:after:translate-x-5"></div>
 </label>
 </div>
 </div>
-<div class="relative flex flex-col gap-6 overflow-hidden rounded-xl border border-accent-beige/40 bg-white/5 p-6 shadow-sm dark:bg-[#1C2431]">
-<div class="absolute inset-x-0 top-0 h-1.5 bg-accent-beige"></div>
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-4">
-<div class="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-<span class="material-symbols-outlined !text-3xl">videocam</span>
+
+<!-- MÁY CHIẾU -->
+<div class="relative rounded-xl border border-border-beige bg-white p-6 shadow-sm">
+<div class="absolute top-0 inset-x-0 h-1.5 bg-primary"></div>
+<div class="flex justify-between items-center">
+<div class="flex gap-4 items-center">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">videocam</span>
 </div>
 <div>
-<p class="text-lg font-bold text-black dark:text-white">Máy Chiếu</p>
+<p class="text-lg font-bold">Máy chiếu</p>
 <div class="flex items-center gap-2">
-<div class="size-2 rounded-full bg-slate-400"></div>
-<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Đang Tắt</p>
+<div class="size-2 bg-status-red rounded-full"></div>
+<p class="text-sm text-text-sub font-medium">Đang tắt</p>
 </div>
 </div>
 </div>
-<label class="relative inline-flex cursor-pointer items-center">
-<input class="peer sr-only" type="checkbox" value=""/>
-<div class="peer h-7 w-12 rounded-full bg-slate-200 after:absolute after:start-[4px] after:top-[4px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none dark:border-gray-600 dark:bg-slate-700"></div>
+<label class="inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only peer"/>
+<div class="w-12 h-7 bg-slate-200 rounded-full peer-checked:bg-primary relative after:absolute after:top-1 after:left-1 after:h-5 after:w-5 after:bg-white after:rounded-full after:transition peer-checked:after:translate-x-5"></div>
 </label>
 </div>
 </div>
-<div class="relative flex flex-col gap-6 overflow-hidden rounded-xl border border-accent-beige/40 bg-white/5 p-6 shadow-sm dark:bg-[#1C2431]">
-<div class="absolute inset-x-0 top-0 h-1.5 bg-accent-beige"></div>
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-4">
-<div class="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-<span class="material-symbols-outlined !text-3xl">outlet</span>
+
+<!-- Ổ ĐIỆN -->
+<div class="relative rounded-xl border border-border-beige bg-white p-6 shadow-sm">
+<div class="absolute top-0 inset-x-0 h-1.5 bg-primary"></div>
+<div class="flex justify-between items-center">
+<div class="flex gap-4 items-center">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">outlet</span>
 </div>
 <div>
-<p class="text-lg font-bold text-black dark:text-white">Ổ Điện</p>
+<p class="text-lg font-bold">Ổ điện</p>
 <div class="flex items-center gap-2">
-<div class="size-2 rounded-full bg-slate-400"></div>
-<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Đang Tắt</p>
+<div class="size-2 bg-status-red rounded-full"></div>
+<p class="text-sm text-text-sub font-medium">Đang tắt</p>
 </div>
 </div>
 </div>
-<label class="relative inline-flex cursor-pointer items-center">
-<input class="peer sr-only" type="checkbox" value=""/>
-<div class="peer h-7 w-12 rounded-full bg-slate-200 after:absolute after:start-[4px] after:top-[4px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none dark:border-gray-600 dark:bg-slate-700"></div>
+<label class="inline-flex items-center cursor-pointer">
+<input type="checkbox" class="sr-only peer"/>
+<div class="w-12 h-7 bg-slate-200 rounded-full peer-checked:bg-primary relative after:absolute after:top-1 after:left-1 after:h-5 after:w-5 after:bg-white after:rounded-full after:transition peer-checked:after:translate-x-5"></div>
 </label>
 </div>
 </div>
-<div class="relative flex flex-col gap-6 overflow-hidden rounded-xl border border-accent-beige/40 bg-white/5 p-6 shadow-sm dark:bg-[#1C2431]">
-<div class="absolute inset-x-0 top-0 h-1.5 bg-accent-beige"></div>
-<div class="flex items-center justify-between">
-<div class="flex items-center gap-4">
-<div class="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-<span class="material-symbols-outlined !text-3xl">ac_unit</span>
+
+<!-- ĐIỀU HÒA -->
+<div class="relative rounded-xl border border-border-beige bg-white p-6 shadow-sm">
+<div class="absolute top-0 inset-x-0 h-1.5 bg-primary"></div>
+<div class="flex justify-between items-center">
+<div class="flex gap-4 items-center">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">ac_unit</span>
 </div>
 <div>
-<p class="text-lg font-bold text-black dark:text-white">Điều Hòa</p>
+<p class="text-lg font-bold">Điều hòa</p>
 <div class="flex items-center gap-2">
-<div class="size-2 rounded-full bg-green-500"></div>
-<p class="text-sm font-medium text-slate-500 dark:text-slate-400">Đang Bật</p>
+<div class="size-2 bg-status-green rounded-full"></div>
+<p class="text-sm text-status-green font-medium">Đang bật</p>
 </div>
 </div>
 </div>
-<label class="relative inline-flex cursor-pointer items-center">
-<input checked="" class="peer sr-only" type="checkbox" value=""/>
-<div class="peer h-7 w-12 rounded-full bg-slate-200 after:absolute after:start-[4px] after:top-[4px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none dark:border-gray-600 dark:bg-slate-700"></div>
+<label class="inline-flex items-center cursor-pointer">
+<input type="checkbox" checked class="sr-only peer"/>
+<div class="w-12 h-7 bg-slate-200 rounded-full peer-checked:bg-primary relative after:absolute after:top-1 after:left-1 after:h-5 after:w-5 after:bg-white after:rounded-full after:transition peer-checked:after:translate-x-5"></div>
 </label>
 </div>
 </div>
-</div>
+
 </div>
 </div>
 </main>
-</div>
-</div>
 
-</body></html>
+</div>
+</body>
+</html>
