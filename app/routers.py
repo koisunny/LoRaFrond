@@ -4,17 +4,59 @@ from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
 import requests
+import time, json, os
+
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/views")
 # CSV_PATH = "sensor_data/sensor_data.csv"
 GSHEET_API = "https://script.google.com/macros/s/AKfycby_p53XC-svWWpZ30JBZARxrcOLPeMKQtKo1p6AIRc6s0_L_3ljpD0_pAIeFzmXFxMg/exec"
 FIREBASE_BASE_URL_DIEMDANH = "https://loradiemdanh-default-rtdb.asia-southeast1.firebasedatabase.app"
+FIREBASE_BASE_URL_DIEUKHIEN = "https://loracontrol-7f0e1-default-rtdb.asia-southeast1.firebasedatabase.app/"
 
-def fetch_sheet_data():
+CACHE_TTL_RAM = 10      # giây
+CACHE_TTL_FILE = 60    # giây (sống qua sleep)
+CACHE_FILE = "/tmp/sensors_cache.json"
+
+_MEM_CACHE = {
+    "ts": 0,
+    "data": None
+}
+
+def fetch_sheet_data_cached():
+    now = time.time()
+
+    # 1️⃣ RAM cache (nhanh nhất)
+    if _MEM_CACHE["data"] and now - _MEM_CACHE["ts"] < CACHE_TTL_RAM:
+        return _MEM_CACHE["data"]
+
+    # 2️⃣ FILE cache (sau khi Render wake)
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "r") as f:
+                payload = json.load(f)
+                if now - payload["ts"] < CACHE_TTL_FILE:
+                    _MEM_CACHE["data"] = payload["data"]
+                    _MEM_CACHE["ts"] = payload["ts"]
+                    return payload["data"]
+        except Exception:
+            pass
+
+    # 3️⃣ Gọi Google Sheets (bất đắc dĩ)
     r = requests.get(GSHEET_API, timeout=15)
     r.raise_for_status()
-    return r.json()
+    data = r.json()
+
+    _MEM_CACHE["data"] = data
+    _MEM_CACHE["ts"] = now
+
+    try:
+        with open(CACHE_FILE, "w") as f:
+            json.dump({"ts": now, "data": data}, f)
+    except Exception:
+        pass
+
+    return data
 
 def safe_float(v):
     try:
@@ -81,12 +123,10 @@ def function3_page(request: Request):
         }
     )
 
-
-
 @router.get("/api/sensors/latest")
 def get_latest():
     try:
-        rows = fetch_sheet_data()
+        rows = fetch_sheet_data_cached()
 
         # lọc giống CSV cũ
         rows = [r for r in rows if r.get("Temp(C)") not in (None, "", " ")]
@@ -109,89 +149,65 @@ def get_latest():
     except Exception as e:
         return {"error": str(e)}
 
-    
-    
-@router.get("/api/sensors/history")
-def get_history():
+@router.get("/api/sensors/bootstrap")
+def sensors_bootstrap():
     try:
-        rows = fetch_sheet_data()
+        rows = fetch_sheet_data_cached()
 
         rows = [r for r in rows if r.get("Temp(C)") not in (None, "", " ")]
 
-        # đảm bảo đúng thứ tự thời gian
         rows.sort(key=lambda r: parse_datetime(r["Timestamp"]))
 
-        return {"data": rows[-50:]}
+        last = rows[-1]
+        history = rows[-50:]
+
+        # ===== baseline =====
+        buckets = {k: [[] for _ in range(24)] for k in ["temp","humid","press","light","gas"]}
+
+        for row in rows:
+            ts = str(row.get("Timestamp", "")).strip()
+            if not ts:
+                continue
+
+            hour = None
+            if "T" in ts:
+                hour = (int(ts.split("T")[1][:2]) + 7) % 24
+            elif " " in ts:
+                hour = int(ts.split(" ", 1)[1].split(":")[0])
+
+            if hour is None or not (0 <= hour <= 23):
+                continue
+
+            def put(key, col):
+                v = safe_float(row.get(col))
+                if v is not None:
+                    buckets[key][hour].append(v)
+
+            put("temp", "Temp(C)")
+            put("humid", "Humidity(%)")
+            put("press", "Pressure")
+            put("light", "Light(lux)")
+            put("gas", "Gas")
+
+        def avg(arr): return sum(arr)/len(arr) if arr else None
+
+        baseline = {
+            k: [avg(h) for h in buckets[k]]
+            for k in buckets
+        }
+
+        return {
+            "latest": {
+                "timestamp": last["Timestamp"],
+                "temp": safe_float(last["Temp(C)"]),
+                "humi": safe_float(last["Humidity(%)"]),
+                "press": safe_float(last["Pressure"]),
+                "light": safe_float(last["Light(lux)"]),
+                "gas": safe_float(last["Gas"]),
+            },
+            "history": history,
+            "baseline": baseline
+        }
 
     except Exception as e:
         return {"error": str(e)}
-
-    
-    
-    
-@router.get("/api/sensors/baseline")
-def read_baseline():
-    buckets = {
-        "temp": [[] for _ in range(24)],
-        "humid": [[] for _ in range(24)],
-        "press": [[] for _ in range(24)],
-        "light": [[] for _ in range(24)],
-        "gas": [[] for _ in range(24)],
-    }
-
-    rows = fetch_sheet_data()
-
-    for row in rows:
-        ts = str(row.get("Timestamp", "")).strip()
-        if not ts:
-            continue
-
-        hour = None
-
-        # ISO UTC
-        if "T" in ts:
-            try:
-                hour = (int(ts.split("T")[1][:2]) + 7) % 24
-            except:
-                continue
-
-        # Local
-        elif " " in ts:
-            try:
-                hour = int(ts.split(" ", 1)[1].split(":")[0])
-            except:
-                continue
-
-        if hour is None or not (0 <= hour <= 23):
-            continue
-
-        v = safe_float(row.get("Temp(C)"))
-        if v is not None:
-            buckets["temp"][hour].append(v)
-
-        v = safe_float(row.get("Humidity(%)"))
-        if v is not None:
-            buckets["humid"][hour].append(v)
-
-        v = safe_float(row.get("Pressure"))
-        if v is not None:
-            buckets["press"][hour].append(v)
-
-        v = safe_float(row.get("Light(lux)"))
-        if v is not None:
-            buckets["light"][hour].append(v)
-
-        v = safe_float(row.get("Gas"))
-        if v is not None:
-            buckets["gas"][hour].append(v)
-
-    def avg(arr):
-        return sum(arr) / len(arr) if arr else None
-
-    return {
-        "temp":  [avg(h) for h in buckets["temp"]],
-        "humid": [avg(h) for h in buckets["humid"]],
-        "press": [avg(h) for h in buckets["press"]],
-        "light": [avg(h) for h in buckets["light"]],
-        "gas":   [avg(h) for h in buckets["gas"]],
-    }

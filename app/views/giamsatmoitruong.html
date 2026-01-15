@@ -417,160 +417,100 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-/* ===============================
-   1) HÀM CHUNG – ĐỌC BASELINE CSV 1 LẦN
-   =============================== */
-async function loadBaseline() {
-    try {
-        const res = await fetch('/api/sensors/baseline');
-
-        // 🚨 Quan trọng: check HTTP status
-        if (!res.ok) {
-            const text = await res.text();
-            console.error("Baseline API error:", text);
-            return null;
-        }
-
-        const data = await res.json();
-
-        const ensure24 = (arr) => {
-            if (!Array.isArray(arr)) arr = [];
-
-            const out = arr.slice(0, 24);
-
-            while (out.length < 24) out.push(null);
-
-            return out.map(v => {
-                if (v === null || v === undefined || v === "") return null;
-                const num = Number(v);
-                return Number.isNaN(num) ? null : num;
-            });
-        };
-
-        const baseline = {
-            temp: ensure24(data.temp),
-            humid: ensure24(data.humid),
-            press: ensure24(data.press),
-            light: ensure24(data.light),
-            gas: ensure24(data.gas)
-        };
-
-        console.log("Baseline loaded:", baseline);
-        return baseline;
-
-    } catch (e) {
-        console.error("loadBaseline error:", e);
-        return null; // ❗ KHÔNG fill 0
-    }
+function normalize24(data) {
+  if (!Array.isArray(data)) return Array(24).fill(null);
+  const out = data.slice(0, 24);
+  while (out.length < 24) out.push(null);
+  return out;
 }
 
+const HOUR_LABELS = Array.from({ length: 24 }, (_, i) =>
+  String(i).padStart(2, "0") + ":00"
+);
 
-/* ===============================
-   2) Load realtime từ API history
-   =============================== */
-async function loadRealtimeHistory() {
-  try {
-    const res = await fetch('/api/sensors/history', { cache: "no-store" });
-    const json = await res.json();
-
-    if (!json || !Array.isArray(json.data)) {
-      console.warn('loadRealtimeHistory: unexpected response', json);
-      return [];
-    }
-
-    // lọc bỏ các row không có Timestamp hoặc Timestamp rỗng
-    const rows = json.data.filter(r =>
-        r &&
-        typeof r.Timestamp === 'string' &&
-        r.Timestamp.includes(" ") &&          // đảm bảo có giờ
-        r[fieldName] !== null &&
-        r[fieldName] !== undefined
-    );
-
-
-    return rows;
-  } catch (e) {
-    console.error('loadRealtimeHistory error', e);
-    return [];
+function parseNum(v) {
+  if (v === null || v === undefined) return null;
+  if (typeof v === "string") {
+    v = v.trim().replace(",", ".");
   }
+  const n = parseFloat(v);
+  return Number.isNaN(n) ? null : n;
 }
 
 /* ===============================
    3) Gộp baseline + realtime theo giờ
    =============================== */
 function mergeData(baseline, rows, fieldName) {
-    const hourly = Array.from({ length: 24 }, () => []);
+  const hourly = Array.from({ length: 24 }, () => []);
 
-    rows.forEach(r => {
-        if (!r || !r.Timestamp) return;
+  rows.forEach(r => {
+    if (!r || !r.Timestamp) return;
 
-        const time = r.Timestamp.includes(" ")
-            ? r.Timestamp.split(" ")[1]
-            : r.Timestamp.split("T")[1];
-        if (!time) return;
+    const time = r.Timestamp.includes(" ")
+      ? r.Timestamp.split(" ")[1]
+      : r.Timestamp.split("T")[1];
+    if (!time) return;
 
-        const h = parseInt(time.split(":")[0]);
-        if (isNaN(h) || h < 0 || h > 23) return;
+    const h = parseInt(time.split(":")[0], 10);
+    if (isNaN(h) || h < 0 || h > 23) return;
 
-        const v = Number(r[fieldName]);
-        if (!Number.isNaN(v)) hourly[h].push(v);
-    });
+    const v = Number(r[fieldName]);
+    if (!Number.isNaN(v)) hourly[h].push(v);
+  });
 
-    const realtimeAvg = hourly.map(arr => {
-        if (!arr.length) return null;
-        return arr.reduce((a, b) => a + b, 0) / arr.length;
-    });
+  const realtimeAvg = hourly.map(arr =>
+    arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : null
+  );
 
-    const now = new Date();
-    const currentHour = now.getHours();
+  const nowH = new Date().getHours();
+  const merged = Array(24).fill(null);
 
-    const merged = new Array(24).fill(null);
-
-    for (let h = 0; h < 24; h++) {
-        if (h > currentHour) {
-            merged[h] = null;
-            continue;
-        }
-
-        if (realtimeAvg[h] !== null) {
-            merged[h] = realtimeAvg[h];
-        } else if (baseline[h] !== undefined && baseline[h] !== null) {
-            merged[h] = baseline[h];
-        } else {
-            merged[h] = null;
-        }
+  for (let h = 0; h <= nowH; h++) {
+    if (realtimeAvg[h] != null) {
+      merged[h] = realtimeAvg[h];
+    } else if (baseline[h] != null) {
+      merged[h] = baseline[h];
     }
+  }
 
-    return merged;
+  return merged;
 }
+
 
 
 function updateHourlyInfo(data24, field) {
-    const now = new Date();
-    const curHour = now.getHours();
+  if (!Array.isArray(data24)) return;
 
-    const current = data24[curHour] ?? 0;
-    const prev = data24[curHour - 1] ?? current;
+  const now = new Date();
+  const curHour = now.getHours();
 
-    let change = 0;
-    if (prev !== 0) change = ((current - prev) / prev) * 100;
+  const current = Number(data24[curHour]);
+  const prev = Number(data24[curHour - 1]);
 
-    const rounded = change.toFixed(1);
+  if (!Number.isFinite(current)) return;
 
-    document.getElementById(field.valueId).innerText =
-        current.toFixed(1) + field.unit;
+  let change = 0;
+  if (Number.isFinite(prev) && prev !== 0) {
+    change = ((current - prev) / prev) * 100;
+  }
 
-    const icon = change >= 0 ? "arrow_upward" : "arrow_downward";
-    const color = change >= 0 ? "text-green-500" : "text-red-500";
+  document.getElementById(field.valueId).innerText =
+    current.toFixed(1) + field.unit;
 
-    const el = document.getElementById(field.changeId);
-    el.innerHTML = `
-        <span class="material-symbols-outlined text-sm">${icon}</span>
-        ${rounded}%
-    `;
-    el.className =
-        `text-sm font-medium leading-normal flex items-center gap-1 ${color}`;
+  const icon = change >= 0 ? "arrow_upward" : "arrow_downward";
+  const color = change >= 0 ? "text-green-500" : "text-red-500";
+
+  const el = document.getElementById(field.changeId);
+  if (!el) return;
+
+  el.innerHTML = `
+    <span class="material-symbols-outlined text-sm">${icon}</span>
+    ${change.toFixed(1)}%
+  `;
+  el.className =
+    `text-sm font-medium leading-normal flex items-center gap-1 ${color}`;
 }
+
 
 /* ===============================
    4) VẼ BIỂU ĐỒ NHIỆT ĐỘ
@@ -578,18 +518,17 @@ function updateHourlyInfo(data24, field) {
 let tempChart = null;
 
 function renderTempChart(data24) {
-  const ctx = document.getElementById("chart-temp").getContext("2d");
-  const labels25 = Array.from({ length: 25 }, (_, i) => String(i).padStart(2,'0') + ":00");
-  const dataset25 = [...data24.slice(0,24)];
+  const ctx = document.getElementById("chart-temp")?.getContext("2d");
+  if (!ctx) return;
 
   if (tempChart) tempChart.destroy();
 
   tempChart = new Chart(ctx, {
     type: "line",
     data: {
-      labels: labels25,
+      labels: HOUR_LABELS,
       datasets: [{
-        data: dataset25,
+        data: normalize24(data24),
         borderColor: "#2bee6c",
         backgroundColor: "rgba(43,238,108,0.12)",
         borderWidth: 3,
@@ -599,47 +538,25 @@ function renderTempChart(data24) {
       }]
     },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true,
+      maintainAspectRatio: false,
       animation: false,
-      transitions: { active: { animation: false }, resize: { animation: false } },
       plugins: { legend: { display: false }, tooltip: { enabled: false } },
       scales: { x: { display: false }, y: { display: false, min: 0, max: 50 } }
     }
   });
 }
 
-function updateTempChart(newData) {
-  if (!tempChart) return;
-  // đảm bảo length =24
-  const d = newData.slice(0,24);
-  while (d.length < 24) d.push(0);
-  tempChart.data.datasets[0].data = [...d, null];
-  tempChart.update('none'); // update nhẹ, không animation
+function updateTempChart(hour, value) {
+  if (!tempChart || !Number.isFinite(value)) return;
+  tempChart.data.datasets[0].data[hour] = value;
+  tempChart.update("none");
 }
 
-async function startTempChart(baseline, history) {
-  try {
-           
 
-    const merged = mergeData(baseline.temp, history, "Temp(C)");
-    renderTempChart(merged);
-
-    // cập nhật nhẹ: mỗi 10s chỉ cập nhật data (không destroy)
-    setInterval(async () => {
-      try {
-        const mergedNow = mergeData(baseline.temp, realtimeBuffer, "Temp(C)");
-        updateTempChart(mergedNow);
-        // không còn updateHourlyInfo
-      } catch (err) {
-        console.error('temp update failed', err);
-      }
-    }, 10000);
-
-  } catch (e) {
-    console.error('startTempChart failed', e);
-  }
+function startTempChart(baseline) {
+  renderTempChart(baseline.temp);
 }
-
 
 //////////////////////////////////////
 
@@ -649,78 +566,46 @@ async function startTempChart(baseline, history) {
 let humidChart = null;
 
 function renderHumidChart(data24) {
-    const ctx = document.getElementById("chart-humid").getContext("2d");
+  const ctx = document.getElementById("chart-humid")?.getContext("2d");
+  if (!ctx) return;
 
-    const labels25 = Array.from({ length: 25 }, (_, i) =>
-        String(i).padStart(2,'0') + ":00"
-    );
+  if (humidChart) humidChart.destroy();
 
-    const dataset25 = [...data24.slice(0,24)];
-
-    if (humidChart) humidChart.destroy();
-
-    humidChart = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: labels25,
-            datasets: [{
-                data: dataset25,
-                borderColor: "#2bee6c",
-                backgroundColor: "rgba(43,238,108,0.12)",
-                borderWidth: 3,
-                pointRadius: 0,
-                tension: 0.35,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false,
-            transitions: { active: { animation: false }, resize: { animation: false } },
-            plugins: { legend: { display: false }, tooltip: { enabled: false } },
-            scales: {
-                x: { display: false },
-                y: { display: false, min: 0, max: 100 }   // độ ẩm 0→100%
-            }
-        }
-    });
-}
-
-function updateHumidChart(newData) {
-    if (!humidChart) return;
-
-    const d = newData.slice(0,24);
-    while (d.length < 24) d.push(0);
-
-    humidChart.data.datasets[0].data = [...d, null];
-    humidChart.update('none');
-}
-
-
-async function startHumidChart(baseline, history) {
-    try {
-        
-
-        let merged = mergeData(baseline.humid, history, "Humidity(%)");
-        renderHumidChart(merged);
-
-        // bỏ updateHourlyInfo
-
-        setInterval(async () => {
-            try {
-                const mergedNow = mergeData(baseline.humid, realtimeBuffer, "Humidity(%)");
-                updateHumidChart(mergedNow);
-                // không updateHourlyInfo
-            } catch (err) {
-                console.error("update humid failed", err);
-            }
-        }, 10000);
-
-    } catch (e) {
-        console.error("startHumidChart failed", e);
+  humidChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: HOUR_LABELS,
+      datasets: [{
+        data: normalize24(data24),
+        borderColor: "#2bee6c",
+        backgroundColor: "rgba(43,238,108,0.12)",
+        borderWidth: 3,
+        pointRadius: 0,
+        tension: 0.35,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false, min: 0, max: 100 } }
     }
+  });
 }
+
+function updateHumidChart(hour, value) {
+  if (!humidChart || !Number.isFinite(value)) return;
+  humidChart.data.datasets[0].data[hour] = value;
+  humidChart.update("none");
+}
+
+
+function startHumidChart(baseline) {
+  renderHumidChart(baseline.humid);
+}
+
 
 /* ===============================
    BIỂU ĐỒ ÁP SUẤT 24 GIỜ
@@ -728,73 +613,44 @@ async function startHumidChart(baseline, history) {
 let pressChart = null;
 
 function renderPressChart(data24) {
-    const ctx = document.getElementById("chart-pressure").getContext("2d");
+  const ctx = document.getElementById("chart-pressure")?.getContext("2d");
+  if (!ctx) return;
 
+  if (pressChart) pressChart.destroy();
 
-    const labels25 = Array.from({ length: 25 }, (_, i) =>
-        String(i).padStart(2, "0") + ":00"
-    );
-
-    const dataset25 = [...data24.slice(0,24)];
-
-
-    pressChart = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: labels25,
-            datasets: [{
-                label: "Pressure",
-                data: dataset25,
-                borderColor: "#2bee6c",
-                backgroundColor: "rgba(43,238,108,0.12)",
-                borderWidth: 3,
-                pointRadius: 0,
-                tension: 0.35,
-                fill: true
-            }]
-        },
-
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false,
-            transitions: {
-                active: { animation: false },
-                resize: { animation: false }
-            },
-
-            plugins: {
-                legend: { display: false },
-                tooltip: { enabled: false }
-            },
-
-            scales: {
-                x: { display: false },
-                y: { display: false }
-            }
-        }
-    });
+  pressChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: HOUR_LABELS,
+      datasets: [{
+        data: normalize24(data24),
+        borderColor: "#2bee6c",
+        backgroundColor: "rgba(43,238,108,0.12)",
+        borderWidth: 3,
+        pointRadius: 0,
+        tension: 0.35,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false } }
+    }
+  });
 }
 
-function updatePressChart(newData) {
-    if (!pressChart) return;
-    pressChart.data.datasets[0].data = newData;
-    pressChart.update("quiet");
+function updatePressChart(hour, value) {
+  if (!pressChart || !Number.isFinite(value)) return;
+  pressChart.data.datasets[0].data[hour] = value;
+  pressChart.update("none");
 }
 
-async function startPressChart(baseline, history) {
-    
 
-    let merged = mergeData(baseline.press, history, "Pressure");
-    renderPressChart(merged);
-
-    // bỏ updateHourlyInfo
-
-    setInterval(async () => {
-        const mergedNow = mergeData(baseline.press, realtimeBuffer, "Pressure");
-        updatePressChart(mergedNow);
-        // không updateHourlyInfo
-    }, 10000);
+function startPressChart(baseline) {
+  renderPressChart(baseline.press);
 }
 
 /* ===============================
@@ -803,72 +659,46 @@ async function startPressChart(baseline, history) {
 let lightChart = null;
 
 function renderLightChart(data24) {
-    const ctx = document.getElementById("chart-light").getContext("2d");
+  const ctx = document.getElementById("chart-light")?.getContext("2d");
+  if (!ctx) return;
 
-    const labels25 = Array.from({ length: 25 }, (_, i) =>
-        String(i).padStart(2, "0") + ":00"
-    );
+  if (lightChart) lightChart.destroy();
 
-    const dataset25 = [...data24.slice(0,24)];
-
-    lightChart = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: labels25,
-            datasets: [{
-                label: "Light",
-                data: dataset25,
-                borderColor: "#2bee6c",
-                backgroundColor: "rgba(43,238,108,0.12)",
-                borderWidth: 3,
-                pointRadius: 0,
-                tension: 0.35,
-                fill: true
-            }]
-        },
-
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false,
-            transitions: {
-                active: { animation: false },
-                resize: { animation: false }
-            },
-
-            plugins: {
-                legend: { display: false },
-                tooltip: { enabled: false }
-            },
-
-            scales: {
-                x: { display: false },
-                y: { display: false }
-            }
-        }
-    });
+  lightChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: HOUR_LABELS,
+      datasets: [{
+        data: normalize24(data24),
+        borderColor: "#2bee6c",
+        backgroundColor: "rgba(43,238,108,0.12)",
+        borderWidth: 3,
+        pointRadius: 0,
+        tension: 0.35,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      scales: { x: { display: false }, y: { display: false } }
+    }
+  });
 }
 
-function updateLightChart(newData) {
-    if (!lightChart) return;
-    lightChart.data.datasets[0].data = newData;
-    lightChart.update("quiet");
+function updateLightChart(hour, value) {
+  if (!lightChart || !Number.isFinite(value)) return;
+  lightChart.data.datasets[0].data[hour] = value;
+  lightChart.update("none");
 }
 
-async function startLightChart(baseline, history) {
-    
 
-    let merged = mergeData(baseline.light, history, "Light(lux)");
-    renderLightChart(merged);
-
-    // bỏ updateHourlyInfo
-
-    setInterval(async () => {
-        const mergedNow = mergeData(baseline.light, realtimeBuffer, "Light(lux)");
-        updateLightChart(mergedNow);
-        // không updateHourlyInfo
-    }, 10000);
+function startLightChart(baseline) {
+  renderLightChart(baseline.light);
 }
+
 
 
 function renderGasChart(data24) {
@@ -952,76 +782,125 @@ function startGasChart(baseline, history) {
 
 
 async function initAllCharts() {
-    try {
-        const baseline = await loadBaseline();
-        if (!baseline) {
-            console.error("Baseline null, abort charts");
-            return;
-        }
+  try {
+    const res = await fetch("/api/sensors/bootstrap", { cache: "no-store" });
+    const data = await res.json();
 
-        const history = await loadRealtimeHistory();
-
-        startTempChart(baseline, history);
-        startHumidChart(baseline, history);
-        startPressChart(baseline, history);
-        startLightChart(baseline, history);
-        startGasChart(baseline, history);
-
-    } catch (err) {
-        console.error("initAllCharts failed", err);
+    if (!data || data.error) {
+      console.error("Bootstrap failed", data?.error);
+      return;
     }
+
+    const { baseline, history, latest } = data;
+
+    startTempChart(baseline);
+    startHumidChart(baseline);
+    startPressChart(baseline);
+    startLightChart(baseline);
+
+
+    // cập nhật số realtime ngay khi load
+    document.getElementById("temp-value").innerText  = latest.temp.toFixed(1) + "°C";
+    document.getElementById("humi-value").innerText  = latest.humi.toFixed(1) + "%";
+    document.getElementById("press-value").innerText = latest.press.toFixed(0) + " hPa";
+    document.getElementById("light-value").innerText = latest.light.toFixed(0) + " lux";
+    document.getElementById("gas-value").innerText   = latest.gas.toFixed(0) + " ppm";
+
+  } catch (err) {
+    console.error("initAllCharts failed", err);
+  }
 }
 
 
 
 ////////////////////////////////////
-let realtimeBuffer = [];   // lưu dữ liệu realtime theo phút / giây
 
 
 
 async function fetchData() {
   try {
-    const res = await fetch("/api/sensors/latest");
+    const res = await fetch("/api/sensors/latest", { cache: "no-store" });
+    if (!res.ok) return;
+
     const data = await res.json();
+    if (!data || !data.timestamp) return;
 
-    const temp  = Number.isFinite(Number(data.temp))  ? Number(data.temp)  : lastValid.temp;
-    const humi  = Number.isFinite(Number(data.humi))  ? Number(data.humi)  : lastValid.humi;
-    const press = Number.isFinite(Number(data.press)) ? Number(data.press) : lastValid.press;
-    const light = Number.isFinite(Number(data.light)) ? Number(data.light) : lastValid.light;
-    const gas   = Number.isFinite(Number(data.gas))   ? Number(data.gas)   : lastValid.gas;
+    // ===== parse dữ liệu (KHÔNG tin Google Sheet) =====
+    const temp  = parseNum(data.temp);
+    const humi  = parseNum(data.humi);
+    const press = parseNum(data.press);
+    const light = parseNum(data.light);
+    const gas   = parseNum(data.gas);
 
-    // cập nhật giá trị hợp lệ cuối
-    lastValid = { temp, humi, press, light, gas };
+    /* ===============================
+       1️⃣ UPDATE REALTIME CARDS
+       =============================== */
+    if (temp !== null)
+      document.getElementById("temp-value").innerText =
+        temp.toFixed(1) + "°C";
 
-    realtimeBuffer.push({
-      Timestamp: data.timestamp,
-      "Temp(C)": temp,
-      "Humidity(%)": humi,
-      "Pressure": press,
-      "Light(lux)": light,
-      "Gas": gas
-    });
+    if (humi !== null)
+      document.getElementById("humi-value").innerText =
+        humi.toFixed(1) + "%";
 
-    if (realtimeBuffer.length > 600) realtimeBuffer.shift();
+    if (press !== null)
+      document.getElementById("press-value").innerText =
+        press.toFixed(0) + " hPa";
 
-    document.getElementById("temp-value").innerText  = temp.toFixed(1) + "°C";
-    document.getElementById("humi-value").innerText  = humi.toFixed(1) + "%";
-    document.getElementById("press-value").innerText = press.toFixed(0) + " hPa";
-    document.getElementById("light-value").innerText = light.toFixed(0) + " lux";
-    document.getElementById("gas-value").innerText   = gas.toFixed(0) + " ppm";
+    if (light !== null)
+      document.getElementById("light-value").innerText =
+        light.toFixed(0) + " lux";
 
-    document.getElementById("temp-24h-current").innerText  = temp.toFixed(1) + "°C";
-    document.getElementById("humid-24h-current").innerText= humi.toFixed(1) + "%";
-    document.getElementById("pressure-24h-current").innerText = press.toFixed(0) + " hPa";
-    document.getElementById("light-24h-current").innerText = light.toFixed(0) + " lux";
+    if (gas !== null)
+      document.getElementById("gas-value").innerText =
+        gas.toFixed(0) + " ppm";
+
+    /* ===============================
+   2️⃣ SYNC HEADER 24H TỪ REALTIME CARDS
+   =============================== */
+    const syncText = (fromId, toId) => {
+    const from = document.getElementById(fromId);
+    const to   = document.getElementById(toId);
+    if (from && to && from.innerText) {
+        to.innerText = from.innerText;
+    }
+    };
+
+    syncText("temp-value",  "temp-24h-current");
+    syncText("humi-value",  "humid-24h-current");
+    syncText("press-value", "press-24h-current");
+    syncText("light-value", "light-24h-current");
+
+    /* ===============================
+       3️⃣ UPDATE CHARTS (1 POINT / HOUR)
+       =============================== */
+    const hour = new Date(data.timestamp).getHours();
+
+    if (temp !== null)  updateTempChart(hour, temp);
+    if (humi !== null)  updateHumidChart(hour, humi);
+    if (press !== null) updatePressChart(hour, press);
+    if (light !== null) updateLightChart(hour, light);
+
+    // gas để sau, không đụng
+    if (gas !== null && typeof updateGasChart === "function") {
+      updateGasChart(hour, gas);
+    }
 
   } catch (e) {
-    console.log("Lỗi khi lấy dữ liệu:", e);
+    console.error("fetchData failed:", e);
   }
 }
-fetchData();
-setInterval(fetchData, 10000);
-initAllCharts();
+
+
+
+window.addEventListener("DOMContentLoaded", async () => {
+  await initAllCharts();   // render 24h
+  fetchData();             // update realtime ngay
+  setInterval(fetchData, 10000);
+});
+
+
+
 
 
 
